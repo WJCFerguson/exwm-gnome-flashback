@@ -8,22 +8,41 @@ This has been tested working on GNOME version **3.36** (Ubuntu 20.04).
 
 There is a branch for 3.28.1 (Ubuntu 16.04)
 
+Please inform me via Issues or PRs of any useful fixes or improvements to this.
+
 # Installation
 
 Clone this repository and run `make install` with root priviledges.
 
 Install the `gnome-flashback` package, and of course `Emacs` with the `exwm` package.
 
-Note, gnome defines Super-based hotkeys and you have to disable these if you want to use them from within Emacs.
-
-And to prevent Nautilus from taking over the screen upon login, run this:
-```
-gsettings set org.gnome.desktop.background show-desktop-icons false
-```
-
 This setup launches `Emacs` with `emacs --eval '(exwm-enable)'`, so configure your `Emacs` to load `exwm` when `(exwm-enable)` is executed, e.g.:
 ``` emacs-lisp
 (autoload 'exwm-enable "my-exwm-config.el")
+```
+
+# Desirable flashback config overrides
+
+## Hotkeys
+
+Gnome-flashback defines Super-based hotkeys and you have to disable these if you want to use them from within Emacs.  Common exwm bindings `s-SPC` and `s-l` in particular need to be unset.  You can disable them in `gnome-control-center`, but it can also be done via `gsettings`:
+
+``` sh
+# to unset s-SPC
+gsettings set org.gnome.desktop.wm.keybindings switch-input-source '[]'
+gsettings set org.gnome.desktop.wm.keybindings switch-input-source-backward '[]'
+# s-l
+gsettings set org.gnome.settings-daemon.plugins.media-keys screensaver '[]'
+```
+
+Note: if trying to determine how to automate unsetting, send current settings to a reference file: `gsettings list-recursively > /tmp/ref`; make your change; view the difference: `diff /tmp/ref <(gsettings list-recursively)`.
+
+## Desktop Icons
+
+To remove desktop icons, if using transparency to a desktop image:
+```
+gsettings set org.gnome.gnome-flashback.desktop.icons show-trash false
+gsettings set org.gnome.gnome-flashback.desktop.icons show-home false
 ```
 
 # Notes
